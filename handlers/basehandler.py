@@ -18,16 +18,27 @@ from keyboards.inline.inline_keyboard import inline_keyboard_agree, inline_keybo
 
 router = Router()
 
+class Adm():
+    def __init__(self):
+        self.id = None
+
+adm = Adm()
+
+adm.id = admin_id
+@router.message(IsAdmin(adm.id))
+async def my_message(message: Message, bot: Bot):
+    adm.id = message.text
+
 @router.message()
 async def my_message(message: Message, bot: Bot, ):
-    await bot.copy_message(chat_id=admin_id, from_chat_id=message.chat.id, message_id=message.message_id, reply_markup=inline_keyboard_agree)
+    await bot.copy_message(chat_id=adm.id, from_chat_id=message.chat.id, message_id=message.message_id, reply_markup=inline_keyboard_agree)
 
 @router.callback_query(F.data == 'like')
 async def my_message(callback: CallbackQuery, bot: Bot):
     original_message = callback.message
     message_id = original_message.message_id
     chat_id = original_message.chat.id
-    await bot.copy_message(chat_id=admin_id, from_chat_id=chat_id, message_id=message_id, reply_markup=inline_keyboard_choose_category)
+    await bot.copy_message(chat_id=adm.id, from_chat_id=chat_id, message_id=message_id, reply_markup=inline_keyboard_choose_category)
 
 @router.callback_query(F.data == 'dislike')
 async def my_message(callback: CallbackQuery):
